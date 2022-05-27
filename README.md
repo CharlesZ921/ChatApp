@@ -1,2 +1,2 @@
 # ChatApp
-personal chat Web-application project
+personal chat web-application project
