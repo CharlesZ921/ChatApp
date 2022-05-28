@@ -1,0 +1,160 @@
+html, body {
+    margin: 0;
+    height: 100%;
+}
+
+#app-view {
+    width: 100%;
+    height: 100%;
+}
+
+#app-menu {
+    background-color: #C67CCA;
+    width: 100%;
+    height: 100px;
+    margin: 0px;
+}
+
+.menu-item {
+    display: inline;
+    width: 50%;
+    height: 100%;
+    margin: 19%;
+    list-style: none;
+    font-size: 30px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.menu-item:hover {
+    color: #5B17C2;
+}
+
+.menu-item a{
+    text-decoration: none;
+    text-align: center;
+    line-height: 100px;
+    height: 100px;
+}
+
+.icon{
+    height: 60%;
+    vertical-align: middle;
+}
+
+#page-view {
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+}
+
+.room-list {
+    margin: 0px;
+    padding-left: 0px;
+}
+
+.room-list li {
+    list-style: none;
+    padding-left: 2%;
+    height: 80px;
+    line-height: 80px;
+    font-size: 30px;
+    vertical-align: middle;
+    border-bottom: 1px solid gray; 
+    background-color:azure;
+}
+
+.room-list li:hover {
+    color:#C67CCA;
+}
+
+.page-control {
+    height: 100px;
+    width: 100%;
+    background-color: #C67CCA;
+    position: absolute;
+    bottom: 0px;
+    line-height: 100px;
+    text-align: center;
+}
+
+input {
+    margin-right: 5%;
+    width: 15%;
+}
+
+textarea{
+    height: 60px;
+    width: 70%;
+    margin-top: 10px;
+}
+
+button {
+    height: 60px;
+    width: 10%;
+    font-size: 20px;
+    background-color:azure;
+    border: 0mm;
+}
+
+/* chat view */
+
+.room-name {
+    margin: 0px;
+    padding-left: 1%;
+    height: 50px;
+    line-height: 50px;
+    font-size: 20px;
+    vertical-align: middle;
+    border: 1px solid gray;
+}
+
+.message {
+    height: 70px;
+    width: 80%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.message:not(.my-message){
+    background-color: aquamarine;
+    margin-left: 2%;
+    border-radius: 35px;
+}
+
+.my-message {
+    background-color: #5B63C3;
+    margin-left: auto;
+    margin-right: 2%;
+    border-radius: 35px;
+}
+
+.message-user {
+    line-height: 70px;
+    margin-left: 2%;
+    font-weight: bold;
+    font-size: 25px;
+}
+
+.message-text {
+    line-height: 35px;
+    width: 80%;
+    font-size: 25px;
+}
+
+.profile-form {
+    margin-top: 30px;
+}
+
+.form-field {
+    font-size: 30px;
+    margin-left: 15%;
+    margin-top: 10px;;
+    width: 70%;
+    height: 100px;
+}
+
+.form-field input{
+    width: 100%;
+    height: 60px;
+    font-size: 30px;
+}
