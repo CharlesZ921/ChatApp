@@ -25,13 +25,14 @@ html, body {
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
-.menu-item:hover {
+.menu-item a:hover {
     color: #5B17C2;
 }
 
 .menu-item a{
     text-decoration: none;
     text-align: center;
+    color: black;
     line-height: 100px;
     height: 100px;
 }
@@ -63,7 +64,12 @@ html, body {
     background-color:azure;
 }
 
-.room-list li:hover {
+.room-list a {
+    color: black;
+    text-decoration: none;
+}
+
+.room-list a:hover {
     color:#C67CCA;
 }
 
