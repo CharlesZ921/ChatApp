@@ -51,7 +51,6 @@ class LobbyView{
         this.listElem = this.elem.querySelector(".room-list");
         this.inputElem = this.elem.querySelector("input");
         this.buttonElem = this.elem.querySelector("button");
-        console.log(this.buttonElem.innerHTML);
     }
 }
 
@@ -114,6 +113,42 @@ class ProfileView{
         </div>
     </div>`);
         this.elem = contentElem;
+    }
+}
+
+class Room{
+    constructor(id, name, image = "assets/everyone-icon.png", message = []){
+        this.id = id;
+        this.name = name;
+        this.image = image;
+        this.message = message;
+    }
+    addMessage(username, text){
+        if(text.trim()){    
+            var message = {username: username, text: text};
+            this.message.push(message);
+        }
+    }
+}
+
+class Lobby{
+    constructor(){
+        var room1 = new Room(1, "Rachel");
+        var room2 = new Room(2, "Christy");
+        var room3 = new Room(3, "Jane");
+        var room4 = new Room(4, "Charles");
+        this.rooms = new Object();
+        this.rooms[room1.id] = room1;
+        this.rooms[room2.id] = room2;
+        this.rooms[room3.id] = room3;
+        this.rooms[room4.id] = room4;
+    }
+    getRoom(roomId){
+        return this.rooms[roomId];
+    }
+    addRoom(id, name, image, messages){
+        var newRoom = new Room(id, name, image, messages);
+        this.rooms[id] = newRoom;
     }
 }
 
