@@ -2,8 +2,9 @@ function main(){
     function renderRoute(){
         var address = window.location.hash;
         var pageView = document.querySelector("#page-view");
-        emptyDOM(pageView);
-        var lobbyView = new LobbyView();
+        emptyDOM(pageView);  
+        var lobby = new Lobby();
+        var lobbyView = new LobbyView(lobby);
         var chatView = new ChatView();
         var profileView = new ProfileView();
         if(address == ""){
@@ -23,7 +24,8 @@ function main(){
 window.addEventListener('load', main);
 
 class LobbyView{
-    constructor(){
+    constructor(lobby){
+        this.lobby = lobby;
         var contentElem = createDOM(`<div class = "content">
         <ul class = "room-list">
           <li>
@@ -51,6 +53,37 @@ class LobbyView{
         this.listElem = this.elem.querySelector(".room-list");
         this.inputElem = this.elem.querySelector("input");
         this.buttonElem = this.elem.querySelector("button");
+        this.redrawList();
+        this.buttonElem.addEventListener('click', () => {
+            var newRoomName = this.inputElem.value;
+            if(newRoomName.trim()){
+                //allocate an unusing id
+                var id = 0;
+                for(var i = 1; i < Number.MAX_SAFE_INTEGER; i++){
+                    if(this.lobby.getRoom(i) == undefined){
+                        id = i;
+                        break;
+                    }
+                }
+                this.lobby.addRoom(id, newRoomName);
+                this.inputElem.value = "";
+            }
+        })
+    }
+    redrawList(){
+        emptyDOM(this.listElem);
+        for (var roomId in this.lobby.rooms){
+            if(this.lobby.rooms.hasOwnProperty(roomId)){
+                var room = this.lobby.rooms[roomId];
+                var a = document.createElement('a');
+                var linkText = document.createTextNode(room.name);
+                a.appendChild(linkText);
+                a.href = "#/chat";
+                var li = document.createElement('li');
+                li.appendChild(a);
+                this.listElem.appendChild(li);
+            }
+        }
     }
 }
 
