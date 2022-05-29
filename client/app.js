@@ -68,7 +68,16 @@ class LobbyView{
                 this.lobby.addRoom(id, newRoomName);
                 this.inputElem.value = "";
             }
-        })
+        });
+        this.lobby.onNewRoom = (room) => {
+            var a = document.createElement('a');
+                var linkText = document.createTextNode(room.name);
+                a.appendChild(linkText);
+                a.href = "#/chat";
+                var li = document.createElement('li');
+                li.appendChild(a);
+                this.listElem.appendChild(li);
+        }
     }
     redrawList(){
         emptyDOM(this.listElem);
@@ -182,6 +191,9 @@ class Lobby{
     addRoom(id, name, image, messages){
         var newRoom = new Room(id, name, image, messages);
         this.rooms[id] = newRoom;
+        if(this.onNewRoom != undefined){
+            this.onNewRoom(newRoom);
+        }
     }
 }
 
