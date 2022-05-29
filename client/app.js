@@ -1,3 +1,8 @@
+
+//global variables
+profile = new Object();
+profile.username = "Coder";
+
 function main(){
     function renderRoute(){
         var address = window.location.hash;
@@ -125,11 +130,31 @@ class ChatView{
             <button>Send</button>
         </div>
     </div>`);
+        this.room = null;
         this.elem = contentElem;
         this.titleElem = this.elem.querySelector("h4");
         this.chatElem = this.elem.querySelector(".message-list");
         this.inputElem = this.elem.querySelector("textarea");
         this.buttonElem = this.elem.querySelector("button")
+        this.buttonElem.addEventListener('click', sendMessage);
+        this.inputElem.addEventListener('keyup', (event) => {
+            if(event.keyCode == 13){
+                console.log(this);
+                this.sendMessage();
+            }
+        });
+    }
+    sendMessage(){
+        var newMessage = inputElem.value;
+        this.room.addMessage(profile.username, newMessage);
+        inputElem.value = "";
+        console.log(newMessage);
+    }
+    setRoom(room){
+        this.room = room;
+        emptyDOM(this.titleElem);
+        this.titleElem.appendChild(document.createTextNode(room.name));
+        
     }
 }
 
@@ -169,6 +194,9 @@ class Room{
         if(text.trim()){    
             var message = {username: username, text: text};
             this.message.push(message);
+            if(this.onNewMessage != undefined){
+                this.onNewMessage(message);
+            }
         }
     }
 }
