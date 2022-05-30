@@ -63,8 +63,11 @@ function main(){
         }
         else if(address.substring(0, 6) == "#/chat"){
             pageView.appendChild(chatView.elem);
+            console.log(lobby.rooms);
             var curRoom = lobby.getRoom(address.substring(7, address.length));
+            console.log(curRoom);
             if(curRoom != null){   
+                console.log("setting");
                 chatView.setRoom(curRoom);
             }
         }
@@ -74,6 +77,7 @@ function main(){
     }
     function refreshLobby(){
         Service.getAllRooms().then((resolve) => {
+            console.log(resolve);
             for(var i = 0; i < resolve.length; i++){
                 var curRoom = lobby.getRoom(resolve[i].id)
                 if(curRoom == null){
@@ -83,7 +87,8 @@ function main(){
                     curRoom.name = resolve[i].name;
                     curRoom.image = resolve[i].image;
                 }
-            }
+            } 
+            renderRoute();
         });
     }
     refreshLobby();
@@ -290,6 +295,9 @@ class Lobby{
         this.rooms = new Object();
     }
     getRoom(roomId){
+        console.log(roomId);
+        console.log(this.rooms);
+        console.log(this.rooms[roomId])
         return this.rooms[roomId];
     }
     addRoom(id, name, image, messages){
