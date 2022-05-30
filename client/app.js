@@ -4,15 +4,15 @@ profile = new Object();
 profile.username = "Coder";
 
 function main(){
+    var lobby = new Lobby();
+    var lobbyView = new LobbyView(lobby);
+    var chatView = new ChatView();
+    var profileView = new ProfileView();
     function renderRoute(){
         var address = window.location.hash;
         var pageView = document.querySelector("#page-view");
         emptyDOM(pageView);  
-        var lobby = new Lobby();
-        var lobbyView = new LobbyView(lobby);
-        var chatView = new ChatView();
-        var profileView = new ProfileView();
-        if(address == ""){
+        if(address == "" || address == "#/"){
             pageView.appendChild(lobbyView.elem);
         }
         else if(address.substring(0, 6) == "#/chat"){
@@ -160,10 +160,10 @@ class ChatView{
         for(var i = 0; i < this.room.messages.length; i++){
             var spanUser = document.createElement("span");
             spanUser.classList.add("message-user");
-            spanUser.appendChild(document.createTextNode(this.room.message[i].username + ": "));
+            spanUser.appendChild(document.createTextNode(this.room.messages[i].username + ": "));
             var spanText = document.createElement("span");
             spanText.classList.add("message-text");
-            spanText.appendChild(document.createTextNode(this.room.message[i].text)); 
+            spanText.appendChild(document.createTextNode(this.room.messages[i].text)); 
             var box = document.createElement("div");
             box.classList.add("message");
             box.appendChild(spanUser);
