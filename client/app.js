@@ -22,7 +22,6 @@ Service.getAllRooms = function(){
         }
         catch(err){
             reject(err);
-            console.log("client-side error");
         }
     });
 };
@@ -34,25 +33,27 @@ Service.addRoom = function(data){
         request.onreadystatechange = function(){
             if(request.readyState == 4){
                 if(request.status == 200){
-                    console.log(request.response);
                     resolve(JSON.parse(request.response));
                 }
                 else{
                     reject(new Error(request.response));
-                    console.log("promise rejected at add room");
                 }
             }
         };
-        console.log(data);
-        console.log(JSON.stringify(data));
         request.send(JSON.stringify(data));
     });
 }
 
-function main(){
+function main(){  
+    var socket = new WebSocket('ws://localhost:8000');
+    socket.addEventListener("message", function(event){
+        var aMessage = JSON.parse(event.data);
+        var room = lobby.getRoom(aMessage.roomId);
+        room.addMessage(aMessage.username, aMessage.text);
+    })
     var lobby = new Lobby();
     var lobbyView = new LobbyView(lobby);
-    var chatView = new ChatView();
+    var chatView = new ChatView(socket);
     var profileView = new ProfileView();
     function renderRoute(){
         var address = window.location.hash;
@@ -63,11 +64,8 @@ function main(){
         }
         else if(address.substring(0, 6) == "#/chat"){
             pageView.appendChild(chatView.elem);
-            console.log(lobby.rooms);
             var curRoom = lobby.getRoom(address.substring(7, address.length));
-            console.log(curRoom);
             if(curRoom != null){   
-                console.log("setting");
                 chatView.setRoom(curRoom);
             }
         }
@@ -77,7 +75,6 @@ function main(){
     }
     function refreshLobby(){
         Service.getAllRooms().then((resolve) => {
-            console.log(resolve);
             for(var i = 0; i < resolve.length; i++){
                 var curRoom = lobby.getRoom(resolve[i].id)
                 if(curRoom == null){
@@ -118,14 +115,6 @@ class LobbyView{
         this.buttonElem.addEventListener('click', () => {
             var newRoomName = this.inputElem.value;
             if(newRoomName.trim()){
-                //allocate an unusing id
-                var id = 0;
-                for(var i = 1; i < Number.MAX_SAFE_INTEGER; i++){
-                    if(this.lobby.getRoom(i) == undefined){
-                        id = i;
-                        break;
-                    }
-                }
                 var data = new Object();
                 data.name = newRoomName;
                 data.image = "assets/everyone-icon.png";
@@ -161,7 +150,8 @@ class LobbyView{
 }
 
 class ChatView{
-    constructor(){
+    constructor(socket){
+        this.socket = socket;
         var contentElem = createDOM(`<div class = "content">
         <h4 class = "room-name">
             Rachel
@@ -189,7 +179,13 @@ class ChatView{
     sendMessage(){
         var newMessage = this.inputElem.value;
         this.room.addMessage(profile.username, newMessage);
+        var sendObj = new Object();
+        sendObj.roomId = this.room.id;
+        sendObj.username = profile.username;
+        sendObj.text = newMessage;
         this.inputElem.value = "";
+        console.log(JSON.stringify(sendObj));
+        this.socket.send(JSON.stringify(sendObj));
     }
     setRoom(room){
         this.room = room;
@@ -279,9 +275,6 @@ class Lobby{
         this.rooms = new Object();
     }
     getRoom(roomId){
-        console.log(roomId);
-        console.log(this.rooms);
-        console.log(this.rooms[roomId])
         return this.rooms[roomId];
     }
     addRoom(id, name, image, messages){
