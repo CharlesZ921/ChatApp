@@ -167,22 +167,6 @@ class ChatView{
             Rachel
         </h4>
         <div class = "message-list">
-            <div class = "message">
-                <span class = "message-user">
-                    Rachel:
-                </span>
-                <span class = "message-text">
-                    message
-                </span>
-            </div>
-            <div class = "message my-message">
-                <span class = "message-user">
-                    Me:
-                </span>
-                <span class = "message-text">
-                    message
-                </span>
-            </div>
         </div>
         <div class = page-control>
             <textarea></textarea>
