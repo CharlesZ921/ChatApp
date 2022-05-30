@@ -14,7 +14,7 @@ Service.getAllRooms = function(){
                 if(request.readyState == 4){
                     if(request.response.status == 200){
                         console.log("promise resolve");
-                        resolve(request.response);
+                        resolve(JSON.parse(request.response));
                     }
                     else{
                         reject(new Error(request.response));
@@ -54,8 +54,24 @@ function main(){
             pageView.appendChild(profileView.elem);                
         }
     }
+    function refreshLobby(){
+        Service.getAllRooms().then((resolve) => {
+            for(var i = 0; i < resolve.length; i++){
+                var curRoom = lobby.getRoom(resolve[i].id)
+                if(curRoom == null){
+                    lobby.addRoom(resolve[i].id, resolve[i].name, resolve[i].image, resolve[i].messages);
+                }
+                else{
+                    curRoom.name = resolve[i].name;
+                    curRoom.image = resolve[i].image;
+                }
+            }
+        });
+    }
+    refreshLobby();
     window.addEventListener('popstate', renderRoute);
     renderRoute();
+    setInterval(refreshLobby, 5000);
 }
 
 window.addEventListener('load', main);
@@ -65,21 +81,6 @@ class LobbyView{
         this.lobby = lobby;
         var contentElem = createDOM(`<div class = "content">
         <ul class = "room-list">
-          <li>
-            <a href = "#/chat/1">
-              Rachel
-            </a>
-          </li>
-          <li>
-            <a href = "#/chat/2">
-              Christy
-            </a>
-          </li>
-          <li>
-            <a href = "#/chat/3">
-              Jane
-            </a>
-          </li>
         </ul>
         <div class = "page-control">
           <input type = text>
@@ -265,15 +266,7 @@ class Room{
 
 class Lobby{
     constructor(){
-        var room1 = new Room(1, "Rachel");
-        var room2 = new Room(2, "Christy");
-        var room3 = new Room(3, "Jane");
-        var room4 = new Room(4, "Charles");
         this.rooms = new Object();
-        this.rooms[room1.id] = room1;
-        this.rooms[room2.id] = room2;
-        this.rooms[room3.id] = room3;
-        this.rooms[room4.id] = room4;
     }
     getRoom(roomId){
         return this.rooms[roomId];
