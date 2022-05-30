@@ -10,10 +10,9 @@ Service.getAllRooms = function(){
             var request = new XMLHttpRequest();
             request.open("GET", Service.origin + "/chat");
             request.onreadystatechange = function(){
-                console.log(request.readyState);
                 if(request.readyState == 4){
-                    if(request.response.status == 200){
-                        console.log("promise resolve");
+                    if(request.status == 200){
+                        console.log(request.response);
                         resolve(JSON.parse(request.response));
                     }
                     else{
