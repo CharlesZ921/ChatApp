@@ -15,8 +15,12 @@ function main(){
         if(address == ""){
             pageView.appendChild(lobbyView.elem);
         }
-        else if(address == "#/chat"){
-            pageView.appendChild(chatView.elem);            
+        else if(address.substring(0, 6) == "#/chat"){
+            pageView.appendChild(chatView.elem);
+            var curRoom = lobby.getRoom(address.substring(7, address.length));
+            if(curRoom != null){   
+                chatView.setRoom(curRoom);
+            }
         }
         else if(address == "#/profile"){
             pageView.appendChild(profileView.elem);                
@@ -34,17 +38,17 @@ class LobbyView{
         var contentElem = createDOM(`<div class = "content">
         <ul class = "room-list">
           <li>
-            <a href = "#/chat">
+            <a href = "#/chat/1">
               Rachel
             </a>
           </li>
           <li>
-            <a href = "#/chat">
+            <a href = "#/chat/2">
               Christy
             </a>
           </li>
           <li>
-            <a href = "#/chat">
+            <a href = "#/chat/3">
               Jane
             </a>
           </li>
@@ -78,7 +82,7 @@ class LobbyView{
             var a = document.createElement('a');
                 var linkText = document.createTextNode(room.name);
                 a.appendChild(linkText);
-                a.href = "#/chat";
+                a.href = "#/chat/" + room.id;
                 var li = document.createElement('li');
                 li.appendChild(a);
                 this.listElem.appendChild(li);
@@ -92,7 +96,7 @@ class LobbyView{
                 var a = document.createElement('a');
                 var linkText = document.createTextNode(room.name);
                 a.appendChild(linkText);
-                a.href = "#/chat";
+                a.href = "#/chat/" + roomId;
                 var li = document.createElement('li');
                 li.appendChild(a);
                 this.listElem.appendChild(li);
@@ -136,25 +140,55 @@ class ChatView{
         this.chatElem = this.elem.querySelector(".message-list");
         this.inputElem = this.elem.querySelector("textarea");
         this.buttonElem = this.elem.querySelector("button")
-        this.buttonElem.addEventListener('click', sendMessage);
+        this.buttonElem.addEventListener('click', () => {this.sendMessage()});
         this.inputElem.addEventListener('keyup', (event) => {
             if(event.keyCode == 13){
-                console.log(this);
                 this.sendMessage();
             }
         });
     }
     sendMessage(){
-        var newMessage = inputElem.value;
+        var newMessage = this.inputElem.value;
         this.room.addMessage(profile.username, newMessage);
-        inputElem.value = "";
-        console.log(newMessage);
+        this.inputElem.value = "";
     }
     setRoom(room){
         this.room = room;
         emptyDOM(this.titleElem);
         this.titleElem.appendChild(document.createTextNode(room.name));
-        
+        emptyDOM(this.chatElem);
+        for(var i = 0; i < this.room.messages.length; i++){
+            var spanUser = document.createElement("span");
+            spanUser.classList.add("message-user");
+            spanUser.appendChild(document.createTextNode(this.room.message[i].username + ": "));
+            var spanText = document.createElement("span");
+            spanText.classList.add("message-text");
+            spanText.appendChild(document.createTextNode(this.room.message[i].text)); 
+            var box = document.createElement("div");
+            box.classList.add("message");
+            box.appendChild(spanUser);
+            box.appendChild(spanText);
+            if(this.room.messages[i].username == profile.username){
+                box.classList.add("my-message");
+            }
+            this.chatElem.appendChild(box);
+        }
+        this.room.onNewMessage = (message) => {
+            var spanUser = document.createElement("span");
+            spanUser.classList.add("message-user");
+            spanUser.appendChild(document.createTextNode(message.username + ": "));
+            var spanText = document.createElement("span");
+            spanText.classList.add("message-text");
+            spanText.appendChild(document.createTextNode(message.text)); 
+            var box = document.createElement("div");
+            box.classList.add("message");
+            box.appendChild(spanUser);
+            box.appendChild(spanText);
+            if(message.username == profile.username){
+                box.classList.add("my-message");
+            }
+            this.chatElem.appendChild(box);
+        }
     }
 }
 
@@ -184,16 +218,16 @@ class ProfileView{
 }
 
 class Room{
-    constructor(id, name, image = "assets/everyone-icon.png", message = []){
+    constructor(id, name, image = "assets/everyone-icon.png", messages = []){
         this.id = id;
         this.name = name;
         this.image = image;
-        this.message = message;
+        this.messages = messages;
     }
     addMessage(username, text){
         if(text.trim()){    
             var message = {username: username, text: text};
-            this.message.push(message);
+            this.messages.push(message);
             if(this.onNewMessage != undefined){
                 this.onNewMessage(message);
             }
