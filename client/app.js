@@ -2,6 +2,34 @@
 //global variables
 profile = new Object();
 profile.username = "Coder";
+Service = new Object();
+Service.origin = window.location.origin;
+Service.getAllRooms = function(){
+    return new Promise((resolve, reject) => {
+        try{
+            var request = new XMLHttpRequest();
+            request.open("GET", Service.origin + "/chat");
+            request.onreadystatechange = function(){
+                console.log(request.readyState);
+                if(request.readyState == 4){
+                    if(request.response.status == 200){
+                        console.log("promise resolve");
+                        resolve(request.response);
+                    }
+                    else{
+                        reject(new Error(request.response));
+                        console.log("promise rejected");
+                    }
+                }
+            };
+            request.send();
+        }
+        catch(err){
+            reject(err);
+            console.log("client-side error");
+        }
+    });
+};
 
 function main(){
     var lobby = new Lobby();
