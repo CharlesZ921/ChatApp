@@ -35,7 +35,6 @@ var messages = new Object;
 messages[sampleRoom.id] = [];
 
 app.route("/chat").get((req, res) => {
-	res.status(200);
 	var returnRooms = [];
 	for(var i = 0; i < chatrooms.length; i++){
 		var retRoom = new Object();
@@ -45,5 +44,29 @@ app.route("/chat").get((req, res) => {
 		retRoom.messages = messages[chatrooms[i].id];
 		returnRooms.push(retRoom);
 	}
-	res.send(JSON.stringify(returnRooms));
+	res.status(200).send(JSON.stringify(returnRooms));
+}).post((req, res) => {
+	var receivedData = req.body;
+	if(receivedData.name == null){
+		res.status(400).send("the room has no name");
+		return;
+	}
+	var room = new Object();
+	var id = 0;
+	loop1:
+	for(var i = 1; i < Number.MAX_SAFE_INTEGER; i++){
+		for(var j = 0; j < chatrooms.length; j++){
+			if(chatrooms[j].id == i){
+				continue loop1;
+			}
+		}
+		id = i;
+		break;
+	}
+	room.id = id;
+	room.name = receivedData.name;
+	room.image = receivedData.image;
+	messages[id] = [];
+	chatrooms.push(room);
+	res.status(200).send(JSON.stringify(room));
 });

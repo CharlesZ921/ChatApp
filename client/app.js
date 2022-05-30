@@ -1,4 +1,3 @@
-
 //global variables
 profile = new Object();
 profile.username = "Coder";
@@ -12,12 +11,10 @@ Service.getAllRooms = function(){
             request.onreadystatechange = function(){
                 if(request.readyState == 4){
                     if(request.status == 200){
-                        console.log(request.response);
                         resolve(JSON.parse(request.response));
                     }
                     else{
                         reject(new Error(request.response));
-                        console.log("promise rejected");
                     }
                 }
             };
@@ -29,6 +26,28 @@ Service.getAllRooms = function(){
         }
     });
 };
+Service.addRoom = function(data){
+    return new Promise((resolve, reject) => {
+        var request = new XMLHttpRequest();
+        request.open("POST", Service.origin + "/chat");
+        request.setRequestHeader("Content-Type", "application/json");
+        request.onreadystatechange = function(){
+            if(request.readyState == 4){
+                if(request.status == 200){
+                    console.log(request.response);
+                    resolve(JSON.parse(request.response));
+                }
+                else{
+                    reject(new Error(request.response));
+                    console.log("promise rejected at add room");
+                }
+            }
+        };
+        console.log(data);
+        console.log(JSON.stringify(data));
+        request.send(JSON.stringify(data));
+    });
+}
 
 function main(){
     var lobby = new Lobby();
@@ -102,7 +121,10 @@ class LobbyView{
                         break;
                     }
                 }
-                this.lobby.addRoom(id, newRoomName);
+                var data = new Object();
+                data.name = newRoomName;
+                data.image = "assets/everyone-icon.png";
+                Service.addRoom(data).then((resolve) => this.lobby.addRoom(resolve.id, resolve.name, resolve.image));
                 this.inputElem.value = "";
             }
         });
