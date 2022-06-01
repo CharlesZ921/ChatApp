@@ -1,3 +1,4 @@
+const WS = require('ws');
 const path = require('path');
 const fs = require('fs');
 const express = require('express');
@@ -69,4 +70,22 @@ app.route("/chat").get((req, res) => {
 	messages[id] = [];
 	chatrooms.push(room);
 	res.status(200).send(JSON.stringify(room));
+});
+
+
+const wss = new WS.WebSocketServer({ port: 8000 });
+
+wss.on('connection', function connection(ws) {
+  ws.on('message', function message(data, isBinary) {
+    wss.clients.forEach(function each(client) {
+      if (client !== ws && client.readyState === WS.WebSocket.OPEN) {
+        client.send(data, { binary: isBinary });
+		console.log(JSON.parse(data));
+		var newText = new Object();
+		newText.username = data.username;
+		newText.text = data.text;
+		messages[data.roomId].push(nextText);
+      }
+    });
+  });
 });
