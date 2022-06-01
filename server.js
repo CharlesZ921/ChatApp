@@ -76,15 +76,15 @@ app.route("/chat").get((req, res) => {
 const wss = new WS.WebSocketServer({ port: 8000 });
 
 wss.on('connection', function connection(ws) {
-  ws.on('message', function message(data, isBinary) {
+  ws.on('message', function message(data) {
     wss.clients.forEach(function each(client) {
       if (client !== ws && client.readyState === WS.WebSocket.OPEN) {
-        client.send(data, { binary: isBinary });
-		console.log(JSON.parse(data));
+        client.send(JSON.stringify(JSON.parse(data)));
+		var messageObj = JSON.parse(data);
 		var newText = new Object();
-		newText.username = data.username;
-		newText.text = data.text;
-		messages[data.roomId].push(nextText);
+		newText.username = messageObj.username;
+		newText.text = messageObj.text;
+		messages[messageObj.roomId].push(newText);
       }
     });
   });

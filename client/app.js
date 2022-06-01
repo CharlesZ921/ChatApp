@@ -47,6 +47,7 @@ Service.addRoom = function(data){
 function main(){  
     var socket = new WebSocket('ws://localhost:8000');
     socket.addEventListener("message", function(event){
+        console.log("new Message comming");
         var aMessage = JSON.parse(event.data);
         var room = lobby.getRoom(aMessage.roomId);
         room.addMessage(aMessage.username, aMessage.text);
