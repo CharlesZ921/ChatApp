@@ -37,7 +37,6 @@ Database.prototype.getRooms = function(){
             collection.find({}).toArray(function (err, result) {
                 if (err) reject(err);
                 else {
-                    console.log(result);
                     resolve(result);
                 }
             });

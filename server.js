@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const express = require('express');
 const ms = require('./Database.js');
+const { resolve } = require('path');
 
 function logRequest(req, res, next){
 	console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
@@ -26,6 +27,11 @@ app.listen(port, () => {
 	console.log(`${new Date()}  App Started. Listening on ${host}:${port}, serving ${clientApp}`);
 });
 
+
+var db = new ms("mongodb://localhost:27017", "cpen322-messenger");
+
+db.getRooms().then((resolve) => console.log(resolve[0]._id));
+
 var chatrooms = [];
 var sampleRoom = new Object;
 sampleRoom.id = 1;
@@ -33,8 +39,12 @@ sampleRoom.name = "Skye";
 sampleRoom.image = "assets/everyone-icon.png";
 chatrooms.push(sampleRoom);
 
+
+//initialize messages
 var messages = new Object;
-messages[sampleRoom.id] = [];
+for(var i = 0; i < resolve.length; i++){
+	messages[resolve[i]._id] = [];
+}
 
 app.route("/chat").get((req, res) => {
 	var returnRooms = [];
@@ -92,7 +102,3 @@ wss.on('connection', function connection(ws) {
 });
 
 
-
-var db = new ms("mongodb://localhost:27017", "cpen322-messenger");
-
-db.getRooms().then((resolve) => console.log(resolve));

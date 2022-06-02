@@ -77,9 +77,9 @@ function main(){
     function refreshLobby(){
         Service.getAllRooms().then((resolve) => {
             for(var i = 0; i < resolve.length; i++){
-                var curRoom = lobby.getRoom(resolve[i].id)
+                var curRoom = lobby.getRoom(resolve[i]._id)
                 if(curRoom == null){
-                    lobby.addRoom(resolve[i].id, resolve[i].name, resolve[i].image, resolve[i].messages);
+                    lobby.addRoom(resolve[i]._id, resolve[i].name, resolve[i].image, resolve[i].messages);
                 }
                 else{
                     curRoom.name = resolve[i].name;
@@ -119,7 +119,7 @@ class LobbyView{
                 var data = new Object();
                 data.name = newRoomName;
                 data.image = "assets/everyone-icon.png";
-                Service.addRoom(data).then((resolve) => this.lobby.addRoom(resolve.id, resolve.name, resolve.image));
+                Service.addRoom(data).then((resolve) => this.lobby.addRoom(resolve._id, resolve.name, resolve.image));
                 this.inputElem.value = "";
             }
         });
