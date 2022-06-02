@@ -2,6 +2,7 @@ const WS = require('ws');
 const path = require('path');
 const fs = require('fs');
 const express = require('express');
+const ms = require('./Database.js');
 
 function logRequest(req, res, next){
 	console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
@@ -89,3 +90,9 @@ wss.on('connection', function connection(ws) {
     });
   });
 });
+
+
+
+var db = new ms("mongodb://localhost:27017", "cpen322-messenger");
+
+db.getRooms().then((resolve) => console.log(resolve));
