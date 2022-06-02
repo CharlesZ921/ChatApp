@@ -30,33 +30,28 @@ app.listen(port, () => {
 
 var db = new ms("mongodb://localhost:27017", "cpen322-messenger");
 
-db.getRooms().then((resolve) => console.log(resolve[0]._id));
+var messages = new Object();
+db.getRooms().then((resolve) => {
+	for(var i = 0; i < resolve.length; i++){
+		messages[resolve[i]._id] = [];
+	}
+});
 
-var chatrooms = [];
-var sampleRoom = new Object;
-sampleRoom.id = 1;
-sampleRoom.name = "Skye";
-sampleRoom.image = "assets/everyone-icon.png";
-chatrooms.push(sampleRoom);
-
-
-//initialize messages
-var messages = new Object;
-for(var i = 0; i < resolve.length; i++){
-	messages[resolve[i]._id] = [];
-}
 
 app.route("/chat").get((req, res) => {
-	var returnRooms = [];
-	for(var i = 0; i < chatrooms.length; i++){
-		var retRoom = new Object();
-		retRoom.id = chatrooms[i].id;
-		retRoom.name = chatrooms[i].name;
-		retRoom.image = chatrooms[i].image;
-		retRoom.messages = messages[chatrooms[i].id];
-		returnRooms.push(retRoom);
-	}
-	res.status(200).send(JSON.stringify(returnRooms));
+	db.getRooms().then((resolve) => {
+		var returnRooms = [];
+		for(var i = 0; i < resolve.length; i++){
+			var retRoom = new Object();
+			retRoom._id = resolve[i]._id;
+			retRoom.name = resolve[i].name;
+			retRoom.image = resolve[i].image;
+			retRoom.messages = messages[resolve[i]._id];
+			returnRooms.push(retRoom);
+		}
+		console.log(returnRooms)
+		res.status(200).send(JSON.stringify(returnRooms));
+	});
 }).post((req, res) => {
 	var receivedData = req.body;
 	if(receivedData.name == null){
