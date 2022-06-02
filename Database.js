@@ -31,11 +31,11 @@ function Database(mongoUrl, dbName){
 Database.prototype.getRooms = function(){
 	return this.connected.then(db =>
 		new Promise((resolve, reject) => {
-			/* TODO: read the chatrooms from `db`
-			 * and resolve an array of chatrooms */
             var collection = db.collection("chatrooms");
             collection.find({}).toArray(function (err, result) {
-                if (err) reject(err);
+                if (err) {
+                    reject(err);
+                }
                 else {
                     resolve(result);
                 }
@@ -47,8 +47,22 @@ Database.prototype.getRooms = function(){
 Database.prototype.getRoom = function(room_id){
 	return this.connected.then(db =>
 		new Promise((resolve, reject) => {
-			/* TODO: read the chatroom from `db`
-			 * and resolve the result */
+            let id;
+            try {
+                id = ObjectId(room_id);
+            } catch (err) {
+                id = room_id;
+            }
+            var query = { _id: id };
+            var collection = db.collection("chatrooms");
+            collection.find(query).toArray(function (err, result) {
+                if (err) reject(err);
+                else if (result.length == 0) {
+                    resolve(null);
+                } else {
+                    resolve(result[0]);
+                }
+            });
 		})
 	)
 }

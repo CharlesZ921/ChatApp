@@ -49,7 +49,6 @@ app.route("/chat").get((req, res) => {
 			retRoom.messages = messages[resolve[i]._id];
 			returnRooms.push(retRoom);
 		}
-		console.log(returnRooms)
 		res.status(200).send(JSON.stringify(returnRooms));
 	});
 }).post((req, res) => {
@@ -76,6 +75,18 @@ app.route("/chat").get((req, res) => {
 	messages[id] = [];
 	chatrooms.push(room);
 	res.status(200).send(JSON.stringify(room));
+});
+
+app.route("/chat:room_id").get((req, res) => {
+	var id = req.params.room_id;
+	db.getRooms(id).then((resolve) => {
+		if(resolve == null){
+			res.status(404).send("Room not found");
+		}
+		else{
+			res.status(200).send(JSON.stringify(resolve));
+		}
+	});
 });
 
 
