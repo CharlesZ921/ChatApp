@@ -13,6 +13,7 @@ function logRequest(req, res, next){
 const host = 'localhost';
 const port = 3000;
 const clientApp = path.join(__dirname, 'client');
+const messageBlockSize = 10;
 
 // express app
 let app = express();
@@ -89,6 +90,17 @@ wss.on('connection', function connection(ws) {
 		newText.username = messageObj.username;
 		newText.text = messageObj.text;
 		messages[messageObj.roomId].push(newText);
+		if(messages[messageObj.roomId].length == messageBlockSize){
+			var newConv = new Object();
+			newConv.room_id = messageObj.roomId;
+			newConv.timestamp = Date.now();
+			newConv.messages = messages[messageObj.roomId];
+			db.addConversation(newConv).then((resolve) => {
+				if(resolve != null){
+					messages[messageObj.roomId] = [];
+				}
+			});
+		}
       }
     });
   });
