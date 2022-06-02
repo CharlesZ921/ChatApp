@@ -77,6 +77,14 @@ app.route("/chat/:room_id").get((req, res) => {
 	});
 });
 
+app.route("/chat/:room_id/messages").get((req, res) => {
+	var id = req.params.room_id;
+	var before = req.query.before;
+	db.getLastConversation(id, before).then((resolve) => {
+		res.status(200).send(JSON.stringify(resolve));
+	});
+});
+
 
 const wss = new WS.WebSocketServer({ port: 8000 });
 

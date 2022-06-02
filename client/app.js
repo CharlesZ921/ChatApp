@@ -1,3 +1,5 @@
+const req = require("express/lib/request");
+
 //global variables
 profile = new Object();
 profile.username = "Coder";
@@ -41,6 +43,19 @@ Service.addRoom = function(data){
             }
         };
         request.send(JSON.stringify(data));
+    });
+}
+Service.getLastConversation = function(roomId, before){
+    return new Promise((resolve, reject) => {
+        var request = new XMLHttpRequest();
+        request.open("GET", Service.origin + "/chat/" + roomId + "/messages?before=" + before.toString());
+        request.onreadystatechange = function(){
+            if(request.readyState == 4){
+                if(request.status == 200){
+                    resolve(JSON.parse(request.response));
+                }
+            }
+        }
     });
 }
 
