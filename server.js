@@ -77,13 +77,14 @@ app.route("/chat").get((req, res) => {
 	res.status(200).send(JSON.stringify(room));
 });
 
-app.route("/chat:room_id").get((req, res) => {
+app.route("/chat/:room_id").get((req, res) => {
 	var id = req.params.room_id;
 	db.getRooms(id).then((resolve) => {
 		if(resolve == null){
 			res.status(404).send("Room not found");
 		}
 		else{
+			console.log(resolve);
 			res.status(200).send(JSON.stringify(resolve));
 		}
 	});
