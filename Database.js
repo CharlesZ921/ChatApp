@@ -83,7 +83,6 @@ Database.prototype.addRoom = function(room){
                     retRoom._id = room["_id"];
                     retRoom.name = room.name
                     retRoom.image = room.image;
-                    console.log(retRoom);
                     resolve(retRoom);
                 });
             }
@@ -94,6 +93,23 @@ Database.prototype.addRoom = function(room){
 Database.prototype.getLastConversation = function(room_id, before){
 	return this.connected.then(db =>
 		new Promise((resolve, reject) => {
+            var time = parseInt(before);
+            if(before == null){
+                time = Date.now();
+            }
+            var query = { $and: [{ room_id: room_id }, { timestamp: { $lt: time } }] };
+            var sort = { timestamp : -1 };
+            var collection = db.collection("coversations");
+            collection.find(query).sort(sort).toArray(function (err, result) {
+                if (err){
+                    reject(err);
+                }
+                else if (result.length == 0) {
+                    resolve(null);
+                } else {
+                    resolve(result[0]);
+                }
+            });
 		})
 	)
 }
@@ -101,8 +117,17 @@ Database.prototype.getLastConversation = function(room_id, before){
 Database.prototype.addConversation = function(conversation){
 	return this.connected.then(db =>
 		new Promise((resolve, reject) => {
-			/* TODO: insert a conversation in the "conversations" collection in `db`
-			 * and resolve the newly added conversation */
+			if(conversation.room_id == null || conversation.timestamp == null || conversation.messages == null){
+                reject(new Error("field missing"));
+            }
+            var collection = db.collection("conversations");
+            collection.insertOne(conversation, (err, result) => {
+                if(err){
+                    reject(err);
+                }
+                console.log(result);
+                resolve(result);
+            });
 		})
 	)
 }

@@ -59,7 +59,6 @@ app.route("/chat").get((req, res) => {
 	}
 	db.addRoom(receivedData).then((resolve) => {
 	    messages[resolve._id] = [];
-		console.log(messages);
 	    res.status(200).send(JSON.stringify(resolve));
 	})
 });
