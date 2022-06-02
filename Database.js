@@ -70,8 +70,23 @@ Database.prototype.getRoom = function(room_id){
 Database.prototype.addRoom = function(room){
 	return this.connected.then(db => 
 		new Promise((resolve, reject) => {
-			/* TODO: insert a room in the "chatrooms" collection in `db`
-			 * and resolve the newly added room */
+            if(room["name"] == null){
+                reject(new Error("name not found"));
+            }
+            else{
+                var collection = db.collection("chatrooms");
+                collection.insertOne(room, (err, result) => {
+                    if(err){
+                        reject(err);
+                    }
+                    var retRoom = new Object();
+                    retRoom._id = room["_id"];
+                    retRoom.name = room.name
+                    retRoom.image = room.image;
+                    console.log(retRoom);
+                    resolve(retRoom);
+                });
+            }
 		})
 	)
 }
@@ -79,8 +94,6 @@ Database.prototype.addRoom = function(room){
 Database.prototype.getLastConversation = function(room_id, before){
 	return this.connected.then(db =>
 		new Promise((resolve, reject) => {
-			/* TODO: read a conversation from `db` based on the given arguments
-			 * and resolve if found */
 		})
 	)
 }

@@ -57,24 +57,11 @@ app.route("/chat").get((req, res) => {
 		res.status(400).send("the room has no name");
 		return;
 	}
-	var room = new Object();
-	var id = 0;
-	loop1:
-	for(var i = 1; i < Number.MAX_SAFE_INTEGER; i++){
-		for(var j = 0; j < chatrooms.length; j++){
-			if(chatrooms[j].id == i){
-				continue loop1;
-			}
-		}
-		id = i;
-		break;
-	}
-	room.id = id;
-	room.name = receivedData.name;
-	room.image = receivedData.image;
-	messages[id] = [];
-	chatrooms.push(room);
-	res.status(200).send(JSON.stringify(room));
+	db.addRoom(receivedData).then((resolve) => {
+	    messages[resolve._id] = [];
+		console.log(messages);
+	    res.status(200).send(JSON.stringify(resolve));
+	})
 });
 
 app.route("/chat/:room_id").get((req, res) => {
