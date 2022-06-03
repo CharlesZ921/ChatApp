@@ -88,6 +88,26 @@ app.route("/chat").get((req, res) => {
 	})
 });
 
+app.route("/login").pose((req, res) => {
+	var receivedData = req.body;
+	db.getUser(receivedData.username).then((result) => {
+		if(result == null){
+			res.redirect('/login');
+		}
+		else{
+			if (isCorrectPassword(receivedData.password, result.password)) {
+				sessionManager.createSession(res, username);
+				res.redirect('/');
+			}
+			else {
+				res.redirect('/login');
+			}
+		}
+	});
+});
+
+function isCorrectPassword(password, saltedHash)
+
 
 
 const wss = new WS.WebSocketServer({ port: 8000 });
