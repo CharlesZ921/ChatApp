@@ -46,7 +46,8 @@ Service.addRoom = function(data){
 Service.getLastConversation = function(roomId, before){
     return new Promise((resolve, reject) => {
         var request = new XMLHttpRequest();
-        request.open("GET", Service.origin + "/chat/" + roomId + "/messages?before=" + before.toString());
+        var destination =  Service.origin + "/chat/" + roomId + "/messages?before=" + encodeURI(before);
+        request.open("GET", destination);
         request.onreadystatechange = function(){
             if(request.readyState == 4){
                 if(request.status == 200){
@@ -54,13 +55,13 @@ Service.getLastConversation = function(roomId, before){
                 }
             }
         }
+        request.send();
     });
 }
 
 function main(){  
     var socket = new WebSocket('ws://localhost:8000');
     socket.addEventListener("message", function(event){
-        console.log("new Message comming");
         var aMessage = JSON.parse(event.data);
         var room = lobby.getRoom(aMessage.roomId);
         room.addMessage(aMessage.username, aMessage.text);
@@ -196,7 +197,7 @@ class ChatView{
         <div class = page-control>
             <textarea></textarea>
             <button>Send</button>
-        </div>
+        </div>wheel
     </div>`);
         this.room = null;
         this.elem = contentElem;
@@ -211,7 +212,6 @@ class ChatView{
             }
         });
         this.chatElem.addEventListener('wheel', (event) => {
-            console.log("wheel event");
             if (this.chatElem.scrollTop == 0 && event.deltaY < 0 && this.room.canLoadConversation == true) {
                 this.room.getLastConversation.next();
             }
@@ -270,7 +270,7 @@ class ChatView{
             conversation.messages.reverse().forEach(message => {
                 var spanUser = document.createElement("span");
                 spanUser.appendChild(document.createTextNode(message.username));
-                username_span.classList.add("message-user");
+                spanUser.classList.add("message-user");
                 var spanText = document.createElement("span");
                 spanText.appendChild(document.createTextNode(message.text));
                 spanText.classList.add("message-text");
@@ -334,9 +334,9 @@ class Room{
         }
     }
     addConversation(conversation){
-        for(message of conversation["messages"]){
+        console.log(conversation);
+        for(const message of conversation["messages"]){
             this.messages = [message].concat(this.messages);
-            console.log(messages);
         }
         this.onFetchConversation(conversation);
     }

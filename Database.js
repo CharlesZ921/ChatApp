@@ -97,16 +97,19 @@ Database.prototype.getLastConversation = function(room_id, before){
             if(before == null){
                 time = Date.now();
             }
+            
             var query = { $and: [{ room_id: room_id }, { timestamp: { $lt: time } }] };
             var sort = { timestamp : -1 };
-            var collection = db.collection("coversations");
+            var collection = db.collection("conversations");
             collection.find(query).sort(sort).toArray(function (err, result) {
                 if (err){
                     reject(err);
                 }
                 else if (result.length == 0) {
+                    console.log("this is null");
                     resolve(null);
                 } else {
+                    console.log(result[0]);
                     resolve(result[0]);
                 }
             });
@@ -125,7 +128,6 @@ Database.prototype.addConversation = function(conversation){
                 if(err){
                     reject(err);
                 }
-                console.log(result);
                 resolve(result);
             });
 		})
