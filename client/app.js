@@ -106,7 +106,12 @@ function main(){
     refreshLobby();
     window.addEventListener('popstate', renderRoute);
     renderRoute();
-    setInterval(refreshLobby, 5000);
+    setInterval(() => {
+        var address = window.location.hash;
+        if(address == "" || address == "#/"){
+            refreshLobby();
+        }
+    }, 5000);
 }
 
 window.addEventListener('load', main);
