@@ -264,7 +264,7 @@ class ChatView{
             }
             this.chatElem.appendChild(box);
         }
-        this.room.onFetchConversation = function(conversation){
+        this.room.onFetchConversation = (conversation) => {
             var hb = this.chatElem.scrollHeight;
             conversation.messages.reverse().forEach(message => {
                 var spanUser = document.createElement("span");
@@ -276,7 +276,7 @@ class ChatView{
                 var box = document.createElement("div");
                 box.classList.add("message");
                 if (message.username == profile.username) {
-                    div.classList.add("my-message");
+                    box.classList.add("my-message");
                 }
                 box.appendChild(spanUser);
                 box.appendChild(spanText);

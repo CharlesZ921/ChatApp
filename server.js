@@ -13,7 +13,7 @@ function logRequest(req, res, next){
 const host = 'localhost';
 const port = 3000;
 const clientApp = path.join(__dirname, 'client');
-const messageBlockSize = 10;
+const messageBlockSize = 5;
 
 // express app
 let app = express();
@@ -91,14 +91,18 @@ const wss = new WS.WebSocketServer({ port: 8000 });
 wss.on('connection', function connection(ws) {
   ws.on('message', function message(data) {
     wss.clients.forEach(function each(client) {
-      if (client !== ws && client.readyState === WS.WebSocket.OPEN) {
-        client.send(JSON.stringify(JSON.parse(data)));
+        if (client !== ws && client.readyState === WS.WebSocket.OPEN) {
+		  
+            client.send(JSON.stringify(JSON.parse(data)));
+	    }
 		var messageObj = JSON.parse(data);
 		var newText = new Object();
 		newText.username = messageObj.username;
 		newText.text = messageObj.text;
 		messages[messageObj.roomId].push(newText);
+		console.log("message = " + messages[messageObj.roomId]);
 		if(messages[messageObj.roomId].length == messageBlockSize){
+			console.log("reach 5");
 			var newConv = new Object();
 			newConv.room_id = messageObj.roomId;
 			newConv.timestamp = Date.now();
@@ -109,7 +113,6 @@ wss.on('connection', function connection(ws) {
 				}
 			});
 		}
-      }
     });
   });
 });
