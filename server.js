@@ -89,18 +89,18 @@ app.route("/chat/:room_id/messages").get((req, res) => {
 const wss = new WS.WebSocketServer({ port: 8000 });
 
 wss.on('connection', function connection(ws) {
-  ws.on('message', function message(data) {
-    wss.clients.forEach(function each(client) {
-        if (client !== ws && client.readyState === WS.WebSocket.OPEN) {
-		  
-            client.send(JSON.stringify(JSON.parse(data)));
-	    }
+	ws.on('message', function message(data) {
+		wss.clients.forEach(function each(client) {
+			if (client !== ws && client.readyState === WS.WebSocket.OPEN) {		  
+				client.send(JSON.stringify(JSON.parse(data)));
+			}
+		});
 		var messageObj = JSON.parse(data);
 		var newText = new Object();
 		newText.username = messageObj.username;
 		newText.text = messageObj.text;
 		messages[messageObj.roomId].push(newText);
-		console.log("message = " + messages[messageObj.roomId]);
+		console.log(messages);
 		if(messages[messageObj.roomId].length == messageBlockSize){
 			console.log("reach 5");
 			var newConv = new Object();
@@ -113,8 +113,7 @@ wss.on('connection', function connection(ws) {
 				}
 			});
 		}
-    });
-  });
+	});
 });
 
 

@@ -211,6 +211,7 @@ class ChatView{
             }
         });
         this.chatElem.addEventListener('wheel', (event) => {
+            console.log("wheel event");
             if (this.chatElem.scrollTop == 0 && event.deltaY < 0 && this.room.canLoadConversation == true) {
                 this.room.getLastConversation.next();
             }
