@@ -110,6 +110,27 @@ function main(){
 
 window.addEventListener('load', main);
 
+function* makeConversationLoader(room) {
+    var lastTimeFetched = room.timeCreated;
+    while (room.canLoadConversation) {
+        room.canLoadConversation = false;
+        yield new Promise((resolve, reject) => {
+            Service.getLastConversation(room["id"], lastTimeFetched).then(
+                result => {
+                    if (result) {
+                        lastTimeFetched = result["timestamp"];
+                        room.canLoadConversation = true;
+                        room.addConversation(result);
+                        resolve(result);
+                    } else {
+                        resolve(null);
+                    }
+                });
+        })
+    }
+}
+
+
 class LobbyView{
     constructor(lobby){
         this.lobby = lobby;
@@ -272,6 +293,8 @@ class Room{
         this.name = name;
         this.image = image;
         this.messages = messages;
+        this.timeCreated = Date.now();
+        this.canLoadConversation = true;
     }
     addMessage(username, text){
         if(text.trim()){    
