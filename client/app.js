@@ -225,7 +225,6 @@ class ChatView{
         sendObj.username = profile.username;
         sendObj.text = newMessage;
         this.inputElem.value = "";
-        console.log(JSON.stringify(sendObj));
         this.socket.send(JSON.stringify(sendObj));
     }
     setRoom(room){
@@ -269,7 +268,7 @@ class ChatView{
             var hb = this.chatElem.scrollHeight;
             conversation.messages.reverse().forEach(message => {
                 var spanUser = document.createElement("span");
-                spanUser.appendChild(document.createTextNode(message.username));
+                spanUser.appendChild(document.createTextNode(message.username + ": "));
                 spanUser.classList.add("message-user");
                 var spanText = document.createElement("span");
                 spanText.appendChild(document.createTextNode(message.text));
@@ -281,7 +280,7 @@ class ChatView{
                 }
                 box.appendChild(spanUser);
                 box.appendChild(spanText);
-                this.chatElem.appendChild(box);
+                this.chatElem.prepend(box);
             });
             conversation.messages.reverse();
             var ha = this.chatElem.scrollHeight;
@@ -334,10 +333,7 @@ class Room{
         }
     }
     addConversation(conversation){
-        console.log(conversation);
-        for(const message of conversation["messages"]){
-            this.messages = [message].concat(this.messages);
-        }
+        this.messages = conversation["messages"].concat(this.messages);
         this.onFetchConversation(conversation);
     }
 }
