@@ -88,7 +88,7 @@ app.route("/chat").get((req, res) => {
 	})
 });
 
-app.route("/login").pose((req, res) => {
+app.route("/login").post((req, res) => {
 	var receivedData = req.body;
 	db.getUser(receivedData.username).then((result) => {
 		if(result == null){
@@ -106,7 +106,11 @@ app.route("/login").pose((req, res) => {
 	});
 });
 
-function isCorrectPassword(password, saltedHash)
+function isCorrectPassword(password, saltedHash){
+	var salt = saltedHash.subString(0, 20);
+	var base64 = saltedHash.subString(20);
+	return (base64 == crypto.createHash('sha256').update(password + salt).digest("base64"));
+}
 
 
 
