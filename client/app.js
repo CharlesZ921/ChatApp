@@ -210,6 +210,11 @@ class ChatView{
                 this.sendMessage();
             }
         });
+        this.chatElem.addEventListener('wheel', (event) => {
+            if (this.chatElem.scrollTop == 0 && event.deltaY < 0 && this.room.canLoadConversation == true) {
+                this.room.getLastConversation.next();
+            }
+        })
     }
     sendMessage(){
         var newMessage = this.inputElem.value;
@@ -259,7 +264,29 @@ class ChatView{
             }
             this.chatElem.appendChild(box);
         }
-    }
+        this.room.onFetchConversation = function(conversation){
+            var hb = this.chatElem.scrollHeight;
+            conversation.messages.reverse().forEach(message => {
+                var spanUser = document.createElement("span");
+                spanUser.appendChild(document.createTextNode(message.username));
+                username_span.classList.add("message-user");
+                var spanText = document.createElement("span");
+                spanText.appendChild(document.createTextNode(message.text));
+                spanText.classList.add("message-text");
+                var box = document.createElement("div");
+                box.classList.add("message");
+                if (message.username == profile.username) {
+                    div.classList.add("my-message");
+                }
+                box.appendChild(spanUser);
+                box.appendChild(spanText);
+                this.chatElem.appendChild(box);
+            });
+            conversation.messages.reverse();
+            var ha = this.chatElem.scrollHeight;
+            this.chatElem.scrollTop = ha - hb;
+        };
+    };
 }
 
 class ProfileView{
@@ -286,7 +313,6 @@ class ProfileView{
         this.elem = contentElem;
     }
 }
-
 class Room{
     constructor(id, name, image = "assets/everyone-icon.png", messages = []){
         this.id = id;
@@ -295,6 +321,7 @@ class Room{
         this.messages = messages;
         this.timeCreated = Date.now();
         this.canLoadConversation = true;
+        this.getLastConversation = makeConversationLoader(this);
     }
     addMessage(username, text){
         if(text.trim()){    
