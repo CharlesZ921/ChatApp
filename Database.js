@@ -106,10 +106,9 @@ Database.prototype.getLastConversation = function(room_id, before){
                     reject(err);
                 }
                 else if (result.length == 0) {
-                    console.log("this is null");
                     resolve(null);
-                } else {
-                    console.log(result[0]);
+                }
+                else {
                     resolve(result[0]);
                 }
             });
@@ -129,6 +128,26 @@ Database.prototype.addConversation = function(conversation){
                     reject(err);
                 }
                 resolve(result);
+            });
+		})
+	)
+}
+
+Database.prototype.getUser = function(username){
+    return this.connected.then(db =>
+		new Promise((resolve, reject) => {
+            var collection = db.collection("users");
+            var query = {username : username};
+            collection.find(query).toArray((err,result) => {
+                if(err){
+                    reject(err);
+                }
+                else if(result.length == 0){
+                    resolve(null);
+                }
+                else{
+                    resolve(result[0]);
+                }
             });
 		})
 	)
