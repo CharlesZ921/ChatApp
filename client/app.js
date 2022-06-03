@@ -1,5 +1,3 @@
-const req = require("express/lib/request");
-
 //global variables
 profile = new Object();
 profile.username = "Coder";
@@ -283,6 +281,13 @@ class Room{
                 this.onNewMessage(message);
             }
         }
+    }
+    addConversation(conversation){
+        for(message of conversation["messages"]){
+            this.messages = [message].concat(this.messages);
+            console.log(messages);
+        }
+        this.onFetchConversation(conversation);
     }
 }
 
