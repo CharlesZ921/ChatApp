@@ -13,7 +13,14 @@ function SessionManager (){
 	// might be worth thinking about why we create these functions
 	// as anonymous functions (per each instance) and not as prototype methods
 	this.createSession = (response, username, maxAge = CookieMaxAgeMs) => {
-		/* To be implemented */
+		var token = crypto.randomBytes(100).toString('hex');
+        var info = new Object();
+        info.username = username;
+        info.timeTokenCreated = Date.now();
+        info.timeExpired = info.timeTokenCreated + maxAge;
+        sessions[token] = info;
+        response.cookie('ChatApp', token, { maxAge: maxAge });
+        setTimeout(() => delete sessions[token], maxAge);
 	};
 
 	this.deleteSession = (request) => {

@@ -4,6 +4,7 @@ const fs = require('fs');
 const express = require('express');
 const ms = require('./Database.js');
 const { resolve } = require('path');
+const sm = require('./SessionManager.js');
 
 function logRequest(req, res, next){
 	console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
@@ -14,6 +15,9 @@ const host = 'localhost';
 const port = 3000;
 const clientApp = path.join(__dirname, 'client');
 const messageBlockSize = 5;
+
+// Session Manager
+var SessionManager = new sm();
 
 // express app
 let app = express();
