@@ -105,7 +105,8 @@ app.route("/login").post((req, res) => {
 		}
 		else{
 			if (isCorrectPassword(receivedData.password, result.password)) {
-				sessionManager.createSession(res, username);
+				sm.createSession(res, receivedData.username);
+				console.log(res.cookie);
 				res.redirect('/');
 			}
 			else {
