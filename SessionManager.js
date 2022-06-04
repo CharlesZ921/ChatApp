@@ -13,7 +13,6 @@ function SessionManager (){
 	// might be worth thinking about why we create these functions
 	// as anonymous functions (per each instance) and not as prototype methods
 	this.createSession = (response, username, maxAge = CookieMaxAgeMs) => {
-        console.log(username);
 		var token = crypto.randomBytes(100).toString('hex');
         var info = new Object();
         info.username = username;

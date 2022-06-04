@@ -119,7 +119,6 @@ app.route("/login").post((req, res) => {
 app.route("/profile").get((req, res) => {	
 	var retObj = new Object();
 	retObj.username = req.username;
-	console.log(retObj.username);
 	res.status(200).send(JSON.stringify(retObj));
 });
 
