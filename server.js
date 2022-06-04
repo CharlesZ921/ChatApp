@@ -25,20 +25,21 @@ app.use(express.json()) 						// to parse application/json
 app.use(express.urlencoded({ extended: true })) // to parse application/x-www-form-urlencoded
 app.use(logRequest);							// logging for debug
 
-// serve static files (client-side)
-app.use('/', express.static(clientApp, { extensions: ['html'] }));
-app.listen(port, () => {
-	console.log(`${new Date()}  App Started. Listening on ${host}:${port}, serving ${clientApp}`);
-});
-
+//////////defined middleware
 app.use('/chat/:room_id/messages', sm.middleware);
-app.use('/chat/:room_id', s.middleware);
+app.use('/chat/:room_id', sm.middleware);
 app.use('/chat', sm.middleware);
 app.use('/profile', sm.middleware);
 app.use('/app.js', sm.middleware, express.static(clientApp + '/app.js'));
 app.use('/index.html', sm.middleware, express.static(clientApp + '/index.html'));
 app.use('/index', sm.middleware, express.static(clientApp + '/index.html'));
-app.use('[/]', sm.middleware, express.static(clientApp + '[/]'));
+app.use('[/]', sm.middleware, express.static(clientApp + '/'));
+app.use('/', express.static(clientApp, { extensions: ['html'] }));
+app.use(sm.middlewareErrorHandler);
+
+app.listen(port, () => {
+	console.log(`${new Date()}  App Started. Listening on ${host}:${port}, serving ${clientApp}`);
+});
 
 
 var db = new ms("mongodb://localhost:27017", "cpen322-messenger");
@@ -150,5 +151,7 @@ wss.on('connection', function connection(ws) {
 		}
 	});
 });
+
+
 
 
