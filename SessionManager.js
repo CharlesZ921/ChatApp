@@ -25,7 +25,13 @@ function SessionManager (){
 	};
 
 	this.deleteSession = (request) => {
-		/* To be implemented */
+		delete request.username;
+        delete request.session;
+        var cookie = request.headers.cookie;
+        cookie = cookie.split(';').map(s => s.split('=').pop().trim()).shift();
+        if(cookie != null){      
+            delete sessions[cookie];
+        }
 	};
 
 	this.middleware = (request, response, next) => {
