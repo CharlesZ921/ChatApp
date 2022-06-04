@@ -115,6 +115,12 @@ app.route("/login").post((req, res) => {
 	});
 });
 
+app.route("/profile").post((req, res) => {
+	var retObj = new Object();
+	retObj.username = req.username;
+	res.status(200).send(JSON.stringify(retObj));
+});
+
 function isCorrectPassword(password, saltedHash){
 	var salt = saltedHash.subString(0, 20);
 	var base64 = saltedHash.subString(20);

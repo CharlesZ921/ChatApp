@@ -58,6 +58,21 @@ Service.getLastConversation = function(roomId, before){
         request.send();
     });
 }
+Service.getProfile = function(){
+    return new Promise((resolve, reject) => {
+        var request = new XMLHttpRequest();
+        var destination =  Service.origin + "/profile";
+        request.open("GET", destination);
+        request.onreadystatechange = function(){
+            if(request.readyState == 4){
+                if(request.status == 200){
+                    resolve(JSON.parse(request.response));
+                }
+            }
+        }
+        request.send();
+    });  
+}
 
 function main(){  
     var socket = new WebSocket('ws://localhost:8000');
@@ -112,6 +127,7 @@ function main(){
             refreshLobby();
         }
     }, 5000);
+    Service.getProfile().then((resolve) => profile.username = resolve.username);
 }
 
 window.addEventListener('load', main);
