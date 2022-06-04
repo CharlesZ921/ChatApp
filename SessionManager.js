@@ -43,8 +43,20 @@ function SessionManager (){
         next();
 	};
 
-	// this function is used by the test script.
-	// you can use it if you want.
+    this.middlewareErrorHandler = function (err, req, res, next) {
+        if (err instanceof SessionError){
+            if (req.headers.accept == 'application/json'){
+                res.status(401).send(JSON.stringify(err.message));
+            }
+            else{
+                res.redirect('/login');
+            }
+        }
+        else{
+            res.status(500).send();
+        }
+    }
+
 	this.getUsername = (token) => ((token in sessions) ? sessions[token].username : null);
 };
 
