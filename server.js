@@ -4,6 +4,7 @@ const fs = require('fs');
 const express = require('express');
 const ms = require('./Database.js');
 const mm = require('./SessionManager.js');
+const crypto = require('crypto');
 
 function logRequest(req, res, next){
 	console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
@@ -122,8 +123,8 @@ app.route("/profile").post((req, res) => {
 });
 
 function isCorrectPassword(password, saltedHash){
-	var salt = saltedHash.subString(0, 20);
-	var base64 = saltedHash.subString(20);
+	var salt = saltedHash.substring(0, 20);
+	var base64 = saltedHash.substring(20);
 	return (base64 == crypto.createHash('sha256').update(password + salt).digest("base64"));
 }
 

@@ -50,14 +50,10 @@ function SessionManager (){
         console.log("entering error handler");
         if (err instanceof SessionError){
             
-            console.log("here1");
             if (req.headers.accept == 'application/json'){
-                
-            console.log("here2");
                 res.status(401).send(JSON.stringify(err.message));
             }
             else{
-                console.log("here3");
                 res.redirect('/login');
             }
         }
