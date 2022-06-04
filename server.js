@@ -106,7 +106,6 @@ app.route("/login").post((req, res) => {
 		else{
 			if (isCorrectPassword(receivedData.password, result.password)) {
 				sm.createSession(res, receivedData.username);
-				console.log(res.cookie);
 				res.redirect('/');
 			}
 			else {
@@ -126,7 +125,15 @@ function isCorrectPassword(password, saltedHash){
 
 const wss = new WS.WebSocketServer({ port: 8000 });
 
-wss.on('connection', function connection(ws) {
+wss.on('connection', function connection(ws, request) {
+	var cookie = request.headers.cookie;
+	if (cookie == null || sm.getUsername(cookie.split('=')[1]) == null) {
+		broker.clients.forEach((client) => {
+			if (client == ws && client.readyState === WebSocket.OPEN) {
+				client.close();
+			}
+		});
+	}
 	ws.on('message', function message(data) {
 		wss.clients.forEach(function each(client) {
 			if (client !== ws && client.readyState === WS.WebSocket.OPEN) {		  
@@ -135,7 +142,7 @@ wss.on('connection', function connection(ws) {
 		});
 		var messageObj = JSON.parse(data);
 		var newText = new Object();
-		newText.username = messageObj.username;
+		newText.username = sm.getUsername(cookie.split('=')[1])
 		newText.text = messageObj.text;
 		messages[messageObj.roomId].push(newText);
 		if(messages[messageObj.roomId].length == messageBlockSize){
