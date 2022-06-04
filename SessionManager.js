@@ -28,7 +28,19 @@ function SessionManager (){
 	};
 
 	this.middleware = (request, response, next) => {
-		/* To be implemented */
+		var cookie = request.headers.cookie;
+        if(cookie == null){
+            next(new SessionError());
+            return;
+        }
+        cookie = cookie.split(';').map(s => s.split('=').pop().trim()).shift();
+        if(sessions[cookie] == null){
+            next(new SessionError());
+            return;           
+        }
+        request.username = sessions[cookie].username;
+        request.session = cookie;
+        next();
 	};
 
 	// this function is used by the test script.
