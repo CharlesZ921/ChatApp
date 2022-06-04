@@ -129,6 +129,10 @@ function isCorrectPassword(password, saltedHash){
 	return (base64 == crypto.createHash('sha256').update(password + salt).digest("base64"));
 }
 
+app.route("/logout").get((req, res) => {
+	sm.deleteSession(req);
+	res.redirect("/login");
+});
 
 
 const wss = new WS.WebSocketServer({ port: 8000 });
