@@ -33,7 +33,9 @@ function SessionManager (){
             next(new SessionError());
             return;
         }
+        console.log(cookie);
         cookie = cookie.split(';').map(s => s.split('=').pop().trim()).shift();
+        console.log(cookie);
         if(sessions[cookie] == null){
             next(new SessionError());
             return;           

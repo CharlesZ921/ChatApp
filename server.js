@@ -3,8 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const express = require('express');
 const ms = require('./Database.js');
-const { resolve } = require('path');
-const sm = require('./SessionManager.js');
+const mm = require('./SessionManager.js');
 
 function logRequest(req, res, next){
 	console.log(`${new Date()}  ${req.ip} : ${req.method} ${req.path}`);
@@ -17,7 +16,7 @@ const clientApp = path.join(__dirname, 'client');
 const messageBlockSize = 5;
 
 // Session Manager
-var SessionManager = new sm();
+var sm = new mm();
 
 // express app
 let app = express();
@@ -31,6 +30,15 @@ app.use('/', express.static(clientApp, { extensions: ['html'] }));
 app.listen(port, () => {
 	console.log(`${new Date()}  App Started. Listening on ${host}:${port}, serving ${clientApp}`);
 });
+
+app.use('/chat/:room_id/messages', sm.middleware);
+app.use('/chat/:room_id', s.middleware);
+app.use('/chat', sm.middleware);
+app.use('/profile', sm.middleware);
+app.use('/app.js', sm.middleware, express.static(clientApp + '/app.js'));
+app.use('/index.html', sm.middleware, express.static(clientApp + '/index.html'));
+app.use('/index', sm.middleware, express.static(clientApp + '/index.html'));
+app.use('[/]', sm.middleware, express.static(clientApp + '[/]'));
 
 
 var db = new ms("mongodb://localhost:27017", "cpen322-messenger");
