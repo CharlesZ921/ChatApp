@@ -13,6 +13,7 @@ function SessionManager (){
 	// might be worth thinking about why we create these functions
 	// as anonymous functions (per each instance) and not as prototype methods
 	this.createSession = (response, username, maxAge = CookieMaxAgeMs) => {
+        console.log(username);
 		var token = crypto.randomBytes(100).toString('hex');
         var info = new Object();
         info.username = username;
@@ -28,15 +29,12 @@ function SessionManager (){
 	};
 
 	this.middleware = (request, response, next) => {
-        console.log("middleware");
 		var cookie = request.headers.cookie;
         if(cookie == null){
             next(new SessionError());
             return;
         }
-        console.log(cookie);
         cookie = cookie.split(';').map(s => s.split('=').pop().trim()).shift();
-        console.log(cookie);
         if(sessions[cookie] == null){
             next(new SessionError());
             return;           
@@ -47,7 +45,6 @@ function SessionManager (){
 	};
 
     this.middlewareErrorHandler = function (err, req, res, next) {
-        console.log("entering error handler");
         if (err instanceof SessionError){
             
             if (req.headers.accept == 'application/json'){

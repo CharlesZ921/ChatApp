@@ -116,9 +116,10 @@ app.route("/login").post((req, res) => {
 	});
 });
 
-app.route("/profile").post((req, res) => {
+app.route("/profile").get((req, res) => {	
 	var retObj = new Object();
 	retObj.username = req.username;
+	console.log(retObj.username);
 	res.status(200).send(JSON.stringify(retObj));
 });
 
@@ -153,7 +154,6 @@ wss.on('connection', function connection(ws, request) {
 		newText.text = messageObj.text;
 		messages[messageObj.roomId].push(newText);
 		if(messages[messageObj.roomId].length == messageBlockSize){
-			console.log("reach 5");
 			var newConv = new Object();
 			newConv.room_id = messageObj.roomId;
 			newConv.timestamp = Date.now();

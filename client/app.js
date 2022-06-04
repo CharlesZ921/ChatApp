@@ -127,7 +127,7 @@ function main(){
             refreshLobby();
         }
     }, 5000);
-    Service.getProfile().then((resolve) => profile.username = resolve.username);
+    Service.getProfile().then((resolve) => {profile.username = resolve.username;});
 }
 
 window.addEventListener('load', main);
